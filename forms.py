@@ -7,3 +7,4 @@ class CommentForm(Form):
     username = StringField('UserName')
     email = EmailField('Correo Electronico')
     comment = TextField('Comentario')
+# campos del formulario
