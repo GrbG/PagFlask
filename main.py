@@ -10,6 +10,11 @@ app.secret_key = 'my_secret_key'  # nadie deberia saber esto xd
 csrf = CsrfProtect(app)
 
 
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
+
 """@app.route('/', methods=['GET', 'POST'])
 def index():
     coment_form = forms.CommentForm(request.form)
