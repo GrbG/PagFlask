@@ -9,7 +9,7 @@ app = Flask(__name__)
 @app.route('/', methods=['GET', 'POST'])
 def index():
     coment_form = forms.CommentForm(request.form)
-    if request.method == 'POST':
+    if request.method == 'POST' and coment_form.validate():
         print(coment_form.username.data)
         print(coment_form.email.data)
         print(coment_form.comment.data)
