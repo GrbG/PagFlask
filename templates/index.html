@@ -1,45 +1,6 @@
 {% extends 'base/base.html' %}
-{% block titulov %} {{ title }} {% endblock %}
 
+{% block titulov %} Index {% endblock %}
 {% block contenido %}
-<h1> Primera Pagina en Flask :D </h1>
-{% from "_macro.html" import render_field %}
-<div class="container">
-    <div class="row">
-        <dir class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-            <form name="sentMessage" id="contactForm" method="POST">
-                <div class="row control-group">
-                    <div class="form-group col-xs-12 floating-label-from-group controls">
-                        {{ render_field(form.username, class='form-control') }}
-                        <p class="help-block text-danger"></p>
-                    </div>
-                </div>
-
-                <div class="row control-group">
-                    <div class="form-group col-xs-12 floating-label-from-group controls">
-                        {{ render_field(form.email, class='form-control') }}
-                        <p class="help-block text-danger"></p>
-                    </div>
-                </div>
-
-                <div class="row control-group">
-                    <div class="form-group col-xs-12 floating-label-from-group controls">
-                        {{ render_field(form.comment, class='form-control') }}
-                        <p class="help-block text-danger"></p>
-                    </div>
-                </div>
-
-                {{ form.honeypot }}
-
-                <br>
-                <div id="success"></div>
-                <div class="row">
-                    <div class="form-group col-xs-12">
-                    <button type="summit" class="btn btn-default">Enviar</button>
-                    </div>
-                </div>
-            </form>
-        </dir>
-    </div>    
-</div>
+    <h2> Index </h2>
 {% endblock %}
