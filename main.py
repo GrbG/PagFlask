@@ -4,6 +4,7 @@ from flask import Flask, render_template, request, make_response
 from flask import session, redirect, url_for, flash
 from flask_wtf import CsrfProtect
 import forms  # archivo forms
+import json
 
 app = Flask(__name__)
 app.secret_key = 'my_secret_key'  # nadie deberia saber esto xd
@@ -63,6 +64,14 @@ def login():
         session['username'] = login_form.username.data
     login = 'Login'
     return render_template('login.html', title=login, form=login_form)
+
+
+@app.route('/ajax-login', methods=['POST'])
+def ajax_login():
+    print(request.form)
+    username = request.form['username']
+    response = {'status': 200, 'username': username, 'id': 1}
+    return json.dumps(response)
 
 
 @app.route('/comment', methods=['GET', 'POST'])
