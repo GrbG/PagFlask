@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from flask import Flask, render_template, request, make_response
-from flask import session, redirect, url_for
+from flask import session, redirect, url_for, flash
 from flask_wtf import CsrfProtect
 import forms  # archivo forms
 
@@ -34,6 +34,13 @@ def index():
     return render_template('index.html', title=titulo)
 
 
+@app.route('/cookie')
+def cookie():
+    response = make_response(render_template('cookie.html'))
+    response.set_cookie('custom_cookie', 'alvaro')
+    return response
+
+
 @app.route('/logout')
 def logout():
     if 'username' in session:
@@ -45,16 +52,17 @@ def logout():
 def login():
     login_form = forms.LoginForm(request.form)
     if request.method == 'POST' and login_form.validate():
+        nombuser = login_form.username.data
+        success_message = 'Bienvenido {}'.format(nombuser)
+        flash(success_message)
         session['username'] = login_form.username.data
     login = 'Login'
     return render_template('login.html', title=login, form=login_form)
 
 
-@app.route('/cookie')
-def cookie():
-    response = make_response(render_template('cookie.html'))
-    response.set_cookie('custom_cookie', 'alvaro')
-    return response
+@app.route('/comment', methods=['GET', 'POST'])
+def comment():
+    pass
 
 
 if __name__ == '__main__':
