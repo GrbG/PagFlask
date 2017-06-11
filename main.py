@@ -6,9 +6,13 @@ from flask_wtf import CsrfProtect
 import forms  # archivo forms
 import json
 
+from config import DevelopmentConfig
+from models import db, User
+
+
 app = Flask(__name__)
-app.secret_key = 'my_secret_key'  # nadie deberia saber esto xd
-csrf = CsrfProtect(app)
+app.config.from_object(DevelopmentConfig)
+csrf = CsrfProtect()
 
 
 @app.errorhandler(404)
@@ -61,14 +65,6 @@ def login():
     return render_template('login.html', title=login, form=login_form)
 
 
-@app.route('/ajax-login', methods=['POST'])
-def ajax_login():
-    print(request.form)
-    username = request.form['username']
-    response = {'status': 200, 'username': username, 'id': 1}
-    return json.dumps(response)
-
-
 @app.route('/comment', methods=['GET', 'POST'])
 def comment():
     coment_form = forms.CommentForm(request.form)
@@ -82,5 +78,19 @@ def comment():
     return render_template('comment.html', title=titulo, form=coment_form)
 
 
+@app.route('/ajax-login', methods=['POST'])
+def ajax_login():
+    print(request.form)
+    username = request.form['username']
+    response = {'status': 200, 'username': username, 'id': 1}
+    return json.dumps(response)
+
+
 if __name__ == '__main__':
-    app.run(debug=True, port=8000)
+    csrf.init_app(app)
+    db.init_app(app)  # inicio la conexion a la bd
+    with app.app_context():
+        db.create_all()  # creo las tablas
+    app.run(port=8000)
+# debug=True es para que el servidor siempre este escuchando nuevos cambios
+# esta en el archivo de config
