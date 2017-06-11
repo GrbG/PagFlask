@@ -13,6 +13,9 @@ def index():
         print(coment_form.username.data)
         print(coment_form.email.data)
         print(coment_form.comment.data)
+    else:
+        print('Error en el Formulario')
+
     titulo = 'Curso Flask.'
     return render_template('index.html', title=titulo, form=coment_form)
 
