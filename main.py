@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from flask import Flask, render_template, request
+from flask_wtf import CsrfProtect
 import forms  # archivo forms
 
 app = Flask(__name__)
+app.secret_key = 'my_secret_key'  # nadie deberia saber esto xd
+csrf = CsrfProtect(app)
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -18,6 +21,13 @@ def index():
 
     titulo = 'Curso Flask.'
     return render_template('index.html', title=titulo, form=coment_form)
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    login_form = forms.LoginForm(request.form)
+    login = 'Login'
+    return render_template('login.html', title=login, form=login_form)
 
 
 if __name__ == '__main__':
