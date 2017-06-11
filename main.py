@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from flask import Flask, render_template, request, make_response
-from flask import session, redirect, url_for, flash
+from flask import session, redirect, url_for, flash, g
 from flask_wtf import CsrfProtect
 import forms  # archivo forms
 import json
@@ -16,19 +16,9 @@ def page_not_found(e):
     return render_template('404.html'), 404
 
 
-"""@app.route('/', methods=['GET', 'POST'])
-def index():
-    coment_form = forms.CommentForm(request.form)
-    if request.method == 'POST' and coment_form.validate():
-        print(coment_form.username.data)
-        print(coment_form.email.data)
-        print(coment_form.comment.data)
-    else:
-        print('Error en el Formulario')
-
-    titulo = 'Curso Flask.'
-    return render_template('index.html', title=titulo, form=coment_form)
-"""
+@app.before_request
+def before_request():
+    g.test = "test1"
 
 
 @app.route('/')
@@ -38,6 +28,11 @@ def index():
         print(username)
     titulo = 'Index'
     return render_template('index.html', title=titulo)
+
+
+@app.after_request
+def after_request(response):
+    return response  # siempre se debe retornar para mostrar la pag
 
 
 @app.route('/cookie')
@@ -76,7 +71,15 @@ def ajax_login():
 
 @app.route('/comment', methods=['GET', 'POST'])
 def comment():
-    pass
+    coment_form = forms.CommentForm(request.form)
+    if request.method == 'POST' and coment_form.validate():
+        print(coment_form.username.data)
+        print(coment_form.email.data)
+        print(coment_form.comment.data)
+    else:
+        print('Error en el Formulario')
+    titulo = 'Curso Flask.'
+    return render_template('comment.html', title=titulo, form=coment_form)
 
 
 if __name__ == '__main__':
