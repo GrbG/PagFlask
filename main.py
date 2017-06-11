@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from flask import Flask, render_template
-import forms
+import forms  # archivo forms
 
 app = Flask(__name__)
 
