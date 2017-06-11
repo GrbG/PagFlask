@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from flask import Flask, render_template, request, make_response
+from flask import session, redirect, url_for
 from flask_wtf import CsrfProtect
 import forms  # archivo forms
 
@@ -26,15 +27,25 @@ def index():
 
 @app.route('/')
 def index():
-    custom_cookie = request.cookies.get('custome_cookie', 'Undefined')
-    print(custom_cookie)
+    if 'username' in session:
+        username = session['username']
+        print(username)
     titulo = 'Index'
     return render_template('index.html', title=titulo)
+
+
+@app.route('/logout')
+def logout():
+    if 'username' in session:
+        session.pop('username')
+    return redirect(url_for('login'))
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     login_form = forms.LoginForm(request.form)
+    if request.method == 'POST' and login_form.validate():
+        session['username'] = login_form.username.data
     login = 'Login'
     return render_template('login.html', title=login, form=login_form)
 

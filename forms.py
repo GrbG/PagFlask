@@ -30,7 +30,7 @@ class CommentForm(Form):
 
 
 class LoginForm(Form):
-    username = StringField('username',
+    username = StringField('Username',
                            [
                                validators.Required(
                                    message='Campo Obligatorio'),
