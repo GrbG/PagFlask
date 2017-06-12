@@ -12,3 +12,5 @@ class User(db.Model):
     email = db.Column(db.String(40))
     password = db.Column(db.String(66))
     create_date = db.Column(db.DateTime, default=datetime.datetime.now())
+
+# comentario master
