@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 from flask import Flask, render_template, request, make_response
 from flask import session, redirect, url_for, flash, g
-from flask_wtf import CsrfProtect
+from flask_wtf import CSRFProtect
 import forms  # archivo forms
 import json
 
@@ -12,7 +12,7 @@ from models import db, User
 
 app = Flask(__name__)
 app.config.from_object(DevelopmentConfig)
-csrf = CsrfProtect()
+csrf = CSRFProtect()
 
 
 @app.errorhandler(404)
