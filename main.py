@@ -29,7 +29,6 @@ def before_request():
 def index():
     if 'username' in session:
         username = session['username']
-        print(username)
     titulo = 'Index'
     return render_template('index.html', title=titulo)
 
@@ -80,10 +79,23 @@ def comment():
 
 @app.route('/ajax-login', methods=['POST'])
 def ajax_login():
-    print(request.form)
     username = request.form['username']
     response = {'status': 200, 'username': username, 'id': 1}
     return json.dumps(response)
+
+
+@app.route('/create', methods=['GET', 'POST'])
+def create():
+    create_form = forms.CreateForm(request.form)
+    if request.method == 'POST' and create_form.validate():
+        user = User(username=create_form.username.data,
+                    password=create_form.password.data,
+                    email=create_form.email.data)
+        db.session.add(user)  # me conecto y quedo conectado en la bd
+        db.session.commit()  # transacción
+        success_message = 'Usuario Encontrado en la BD'
+        flash(success_message)
+    return render_template('create.html', form=create_form)
 
 
 if __name__ == '__main__':
