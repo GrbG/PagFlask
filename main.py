@@ -88,9 +88,9 @@ def ajax_login():
 def create():
     create_form = forms.CreateForm(request.form)
     if request.method == 'POST' and create_form.validate():
-        user = User(username=create_form.username.data,
-                    password=create_form.password.data,
-                    email=create_form.email.data)
+        user = User(create_form.username.data,
+                    create_form.email.data,
+                    create_form.password.data)
         db.session.add(user)  # me conecto y quedo conectado en la bd
         db.session.commit()  # transacción
         success_message = 'Usuario Encontrado en la BD'
