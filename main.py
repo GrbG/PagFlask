@@ -22,7 +22,10 @@ def page_not_found(e):
 
 @app.before_request
 def before_request():
-    g.test = "test1"
+    if 'username' not in session and request.endpoint in ['comment']:
+        return redirect(url_for('login'))
+    elif 'username' in session and request.endpoint in ['login', 'create']:
+        return redirect(url_for('index'))
 
 
 @app.route('/')
@@ -54,33 +57,42 @@ def logout():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    login = 'Login'
     login_form = forms.LoginForm(request.form)
     if request.method == 'POST' and login_form.validate():
-        nombuser = login_form.username.data
-        success_message = 'Bienvenido {}'.format(nombuser)
-        flash(success_message)
+        username = login_form.username.data
+        password = login_form.password.data
+        user = User.query.filter_by(username=username).first
+        if user is not None and user.verify_password(password):
+            success_message = 'Bienvenido {}'.format(username)
+            flash(success_message)
+            session['username'] = username
+            session['user_id'] = user.id
+            return redirect(url_for('index'))
+        else:
+            error_message = 'Usuario o Password No Valido'
+            flash(error_message)
+
         session['username'] = login_form.username.data
-    login = 'Login'
+
     return render_template('login.html', title=login, form=login_form)
 
 
 @app.route('/comment', methods=['GET', 'POST'])
 def comment():
+    titulo = 'Curso Flask.'
     coment_form = forms.CommentForm(request.form)
     if request.method == 'POST' and coment_form.validate():
-        print(coment_form.username.data)
-        print(coment_form.email.data)
-        print(coment_form.comment.data)
+        pass
     else:
-        print('Error en el Formulario')
-    titulo = 'Curso Flask.'
+        pass
     return render_template('comment.html', title=titulo, form=coment_form)
 
 
 @app.route('/ajax-login', methods=['POST'])
 def ajax_login():
     username = request.form['username']
-    response = {'status': 200, 'username': username, 'id': 1}
+    response = {'status': 200, 'username': username}
     return json.dumps(response)
 
 
