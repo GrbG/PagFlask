@@ -58,23 +58,28 @@ def logout():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     login = 'Login'
+    print('1', request.method)
     login_form = forms.LoginForm(request.form)
+
     if request.method == 'POST' and login_form.validate():
         username = login_form.username.data
         password = login_form.password.data
+        print('user:', username, 'pass:', password)
+
         user = User.query.filter_by(username=username).first
-        if user is not None and user.verify_password(password):
+
+        if user is not None:  # and User.verify_password(password):
             success_message = 'Bienvenido {}'.format(username)
             flash(success_message)
             session['username'] = username
-            session['user_id'] = user.id
+            # session['user_id'] = user.id
             return redirect(url_for('index'))
         else:
             error_message = 'Usuario o Password No Valido'
             flash(error_message)
 
         session['username'] = login_form.username.data
-
+    print('2', request.method)
     return render_template('login.html', title=login, form=login_form)
 
 
