@@ -2,5 +2,6 @@
 {% block titulov %} Cookies {% endblock %}
 
 {% block contenido %}
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
     <h3> Cookies :0 </h3>
 {% endblock %}

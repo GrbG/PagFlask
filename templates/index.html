@@ -2,5 +2,6 @@
 
 {% block titulov %} Index {% endblock %}
 {% block contenido %}
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
     <h2> Index </h2>
 {% endblock %}

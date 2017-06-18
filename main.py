@@ -7,7 +7,7 @@ import forms  # archivo forms
 import json
 
 from config import DevelopmentConfig
-from models import db, User
+from models import db, User, Comment
 
 
 app = Flask(__name__)
@@ -58,28 +58,25 @@ def logout():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     login = 'Login'
-    print('1', request.method)
     login_form = forms.LoginForm(request.form)
 
     if request.method == 'POST' and login_form.validate():
         username = login_form.username.data
         password = login_form.password.data
-        print('user:', username, 'pass:', password)
 
-        user = User.query.filter_by(username=username).first
+        user = User.query.filter_by(username=username).first()
 
         if user is not None:  # and User.verify_password(password):
             success_message = 'Bienvenido {}'.format(username)
             flash(success_message)
             session['username'] = username
-            # session['user_id'] = user.id
+            session['user_id'] = user.id
             return redirect(url_for('index'))
         else:
             error_message = 'Usuario o Password No Valido'
             flash(error_message)
 
         session['username'] = login_form.username.data
-    print('2', request.method)
     return render_template('login.html', title=login, form=login_form)
 
 
@@ -87,18 +84,26 @@ def login():
 def comment():
     titulo = 'Curso Flask.'
     coment_form = forms.CommentForm(request.form)
+    user_id = session['user_id']
+    print('user id dentro del validate:', user_id)
+    print('uno:', request.method)
+    print('comentario:', coment_form.comment.data)
     if request.method == 'POST' and coment_form.validate():
-        pass
+        comment = Comment(user_id=user_id, text=coment_form.comment.data)
+        db.session.add(comment)
+        db.session.commit()
+        success_message = 'Nuevo Comentario Enviado'
+        flash(success_message)
     else:
         pass
     return render_template('comment.html', title=titulo, form=coment_form)
 
 
-@app.route('/ajax-login', methods=['POST'])
-def ajax_login():
-    username = request.form['username']
-    response = {'status': 200, 'username': username}
-    return json.dumps(response)
+# @app.route('/ajax-login', methods=['POST'])
+# def ajax_login():
+#     username = request.form['username']
+#     response = {'status': 200, 'username': username, 'id': 1}
+#     return json.dumps(response)
 
 
 @app.route('/create', methods=['GET', 'POST'])
