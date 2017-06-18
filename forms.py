@@ -10,22 +10,6 @@ def length_honeypot(form, field):
 
 
 class CommentForm(Form):
-    username = StringField('Nombre Usuario',
-                           [
-                               validators.Required(
-                                   message='El Campo es Obligatorio'),
-                               validators.length(
-                                   min=4, max=25,
-                                   message='Ingrese un \
-                                   Usuario Valido!(4 a 25 caracteres).'),
-                           ])
-    email = EmailField('Correo Electronico',
-                       [
-                           validators.Required(
-                               message='El Campo es Obligatorio'),
-                           validators.Email(
-                               message='Ingrese un Formato Valido')
-                       ])
     comment = TextField('Comentario')
     honeypot = HiddenField('', [length_honeypot])
 

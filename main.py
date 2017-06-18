@@ -85,25 +85,21 @@ def comment():
     titulo = 'Curso Flask.'
     coment_form = forms.CommentForm(request.form)
     user_id = session['user_id']
-    print('user id dentro del validate:', user_id)
-    print('uno:', request.method)
-    print('comentario:', coment_form.comment.data)
     if request.method == 'POST' and coment_form.validate():
         comment = Comment(user_id=user_id, text=coment_form.comment.data)
         db.session.add(comment)
         db.session.commit()
         success_message = 'Nuevo Comentario Enviado'
         flash(success_message)
-    else:
-        pass
+
     return render_template('comment.html', title=titulo, form=coment_form)
 
 
-# @app.route('/ajax-login', methods=['POST'])
-# def ajax_login():
-#     username = request.form['username']
-#     response = {'status': 200, 'username': username, 'id': 1}
-#     return json.dumps(response)
+@app.route('/ajax-login', methods=['POST'])
+def ajax_login():
+    username = request.form['username']
+    response = {'status': 200, 'username': username, 'id': 1}
+    return json.dumps(response)
 
 
 @app.route('/create', methods=['GET', 'POST'])
