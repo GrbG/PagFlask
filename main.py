@@ -6,15 +6,31 @@ from flask_wtf import CSRFProtect
 import forms  # archivo forms
 import json
 from flask_mail import Mail, Message
+from flask import copy_current_request_context
 
 from config import DevelopmentConfig
 from models import db, User, Comment
 from helper import date_format
 
+import threading
+
 app = Flask(__name__)
 app.config.from_object(DevelopmentConfig)
 csrf = CSRFProtect()
 mail = Mail()
+
+
+def send_email(user_email, username):
+    msg = Message('Gracias por Registrarte!',
+                  sender=app.config['MAIL_USERNAME'],
+                  recipients=[user_email])
+    msg.html = render_template('email.html', user=User.username)
+    mail.send(msg)
+
+
+def create_session(username='', user_id=''):
+    session['username'] = username
+    session['user_id'] = user_id
 
 
 @app.errorhandler(404)
@@ -125,11 +141,15 @@ def create():
                     create_form.password.data)
         db.session.add(user)  # me conecto y quedo conectado en la bd
         db.session.commit()  # transacción
-        msg = Message('Gracias por Registrarte!',
-                      sender=app.config['MAIL_USERNAME'],
-                      recipients=[user.email])
-        msg.html = render_template('email.html', user=User.username)
-        mail.send(msg)
+
+        @copy_current_request_context
+        def send_message(email, username):
+            send_email(email, username)
+        sender = threading.Thread(name='mail_sender',
+                                  target=send_message,
+                                  args=(user.email, User.username))
+        sender.start()
+
         success_message = 'Usuario Encontrado en la BD'
         flash(success_message)
     return render_template('create.html', form=create_form)
