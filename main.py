@@ -5,14 +5,16 @@ from flask import session, redirect, url_for, flash, g
 from flask_wtf import CSRFProtect
 import forms  # archivo forms
 import json
+from flask_mail import Mail, Message
 
 from config import DevelopmentConfig
 from models import db, User, Comment
-
+from helper import date_format
 
 app = Flask(__name__)
 app.config.from_object(DevelopmentConfig)
 csrf = CSRFProtect()
+mail = Mail()
 
 
 @app.errorhandler(404)
@@ -108,8 +110,10 @@ def reviews(page=1):
     per_page = 2
     comments = Comment.query.join(User).add_columns(
         User.username,
-        Comment.text).paginate(page, per_page, True)
-    return render_template('reviews.html', comments=comments)
+        Comment.text,
+        Comment.create_date).paginate(page, per_page, True)
+    return render_template('reviews.html', comments=comments,
+                           date_format=date_format)
 
 
 @app.route('/create', methods=['GET', 'POST'])
@@ -121,6 +125,11 @@ def create():
                     create_form.password.data)
         db.session.add(user)  # me conecto y quedo conectado en la bd
         db.session.commit()  # transacción
+        msg = Message('Gracias por Registrarte!',
+                      sender=app.config['MAIL_USERNAME'],
+                      recipients=[user.email])
+        msg.html = render_template('email.html', user=User.username)
+        mail.send(msg)
         success_message = 'Usuario Encontrado en la BD'
         flash(success_message)
     return render_template('create.html', form=create_form)
@@ -129,6 +138,7 @@ def create():
 if __name__ == '__main__':
     csrf.init_app(app)
     db.init_app(app)  # inicio la conexion a la bd
+    mail.init_app(app)
     with app.app_context():
         db.create_all()  # creo las tablas
     app.run(port=8000)
