@@ -102,6 +102,16 @@ def ajax_login():
     return json.dumps(response)
 
 
+@app.route('/reviews/', methods=['GET'])
+@app.route('/reviews/<int:page>', methods=['GET'])
+def reviews(page=1):
+    per_page = 2
+    comments = Comment.query.join(User).add_columns(
+        User.username,
+        Comment.text).paginate(page, per_page, True)
+    return render_template('reviews.html', comments=comments)
+
+
 @app.route('/create', methods=['GET', 'POST'])
 def create():
     create_form = forms.CreateForm(request.form)
