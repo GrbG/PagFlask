@@ -161,6 +161,6 @@ if __name__ == '__main__':
     mail.init_app(app)
     with app.app_context():
         db.create_all()  # creo las tablas
-    app.run(port=8000)
+    app.run(port=5000)
 # debug=True es para que el servidor siempre este escuchando nuevos cambios
 # esta en el archivo de config

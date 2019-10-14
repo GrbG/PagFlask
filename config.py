@@ -17,6 +17,7 @@ class Config(object):
 class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_TRACK_MODIFICATIONS = True
-    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:ji25grohe@localhost/pageflask'
+    # SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:ji25grohe@localhost/pageflask'
     # SQLALCHEMY_DATABASE_URI = 'mysql://root:password@localhost/flask'
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'database.db')
 # motor://usuario:password@servidor/bd
